@@ -10,10 +10,19 @@ const ScoreboardContainer = styled.div`
   color: #FFD700; /* Gold color for score */
 `;
 
-const Scoreboard = ({ score }) => {
+const Row = styled.div`
+  display: flex;
+  gap: 16px;
+`;
+
+const Scoreboard = ({ score, level, cansDown, cansTotal }) => {
   return (
     <ScoreboardContainer>
-      Score: {score}
+      <Row>
+        <span>Score: {score}</span>
+        <span>Level: {level}</span>
+        <span>Cans: {cansDown}/{cansTotal}</span>
+      </Row>
     </ScoreboardContainer>
   );
 };

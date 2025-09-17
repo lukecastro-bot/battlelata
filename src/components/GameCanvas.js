@@ -1,7 +1,15 @@
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-import { incrementScore, startGame, updateTimer } from '../store/gameSlice';
+import {
+  incrementScore,
+  startGame,
+  updateTimer,
+  setLevel,
+  setCansTotal,
+  resetCansDown,
+  incrementCansDown,
+} from '../store/gameSlice';
 import useGamePhysics from '../hooks/useGamePhysics';
 import Scoreboard from './Scoreboard';
 
@@ -45,16 +53,23 @@ const ItPlayerSprite = styled.img`
 const GameCanvas = () => {
   const canvasRef = useRef(null);
   const dispatch = useDispatch();
-  const { score, gameStarted, gameOver } = useSelector((state) => state.game);
+  const { score, gameStarted, gameOver, level, cansTotal, cansDown } = useSelector((state) => state.game);
 
   const [itPlayerPosition, setItPlayerPosition] = useState({ x: 600, y: 500 });
 
-  const { resetSlipper, resetCan } = useGamePhysics(canvasRef, () => {
-    dispatch(incrementScore(10));
-    setTimeout(() => {
-      resetCan();
+  const { resetSlipper, setupLevel } = useGamePhysics(canvasRef, {
+    onScore: (points) => dispatch(incrementScore(points)),
+    onCanDown: () => dispatch(incrementCansDown()),
+    onLevelCleared: () => {
+      const nextLevel = level + 1;
+      const nextTotal = cansTotal + 2; // add 2 cans per level
+      dispatch(setLevel(nextLevel));
+      dispatch(setCansTotal(nextTotal));
+      dispatch(resetCansDown());
+      setupLevel(nextTotal);
+      // Give player a new shot
       resetSlipper();
-    }, 500);
+    },
   });
 
   useEffect(() => {
@@ -69,14 +84,18 @@ const GameCanvas = () => {
 
   const handleStartGame = useCallback(() => {
     dispatch(startGame());
-    resetCan();
+    // initialize level and cans
+    dispatch(setLevel(1));
+    dispatch(setCansTotal(5));
+    dispatch(resetCansDown());
+    setupLevel(5);
     resetSlipper();
     setItPlayerPosition({ x: 600, y: 500 });
-  }, [dispatch, resetCan, resetSlipper]); // ✅ added deps
+  }, [dispatch, setupLevel, resetSlipper]);
 
   return (
     <GameContainer>
-      <Scoreboard score={score} />
+      <Scoreboard score={score} level={level} cansDown={cansDown} cansTotal={cansTotal} />
       <GameCanvasStyled ref={canvasRef} />
       {!gameStarted && (
         <button onClick={handleStartGame}>Start Game</button>
