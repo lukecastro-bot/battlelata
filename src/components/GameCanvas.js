@@ -15,7 +15,7 @@ import Scoreboard from "./Scoreboard";
 
 // ✅ Import images
 import itPlayerImg from "../assets/images/it_player.png";
-import bgImg from "../assets/images/philippine_village_background.png";
+import bgImg from "../assets/images/bggame.jpg";
 
 const GameContainer = styled.div`
   width: 100vw;

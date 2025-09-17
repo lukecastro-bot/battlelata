@@ -3,7 +3,7 @@ import styled, { keyframes } from "styled-components";
 import { useNavigate } from "react-router-dom";
 
 // ✅ Import background image
-import bgImg from "../assets/images/philippine_village_background.png";
+import bgImg from "../assets/images/bg.png";
 
 // 🌌 Background animation (parallax float)
 const floatBG = keyframes`
